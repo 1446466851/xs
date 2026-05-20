@@ -1,0 +1,1016 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>竞拍之王挑战</title>
+  <style>
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Microsoft YaHei", Arial, sans-serif;
+      background: linear-gradient(135deg, #f4f7fb, #e8eef8);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+      color: #1f2937;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 1120px;
+      background: #ffffff;
+      border-radius: 24px;
+      box-shadow: 0 20px 45px rgba(15, 23, 42, 0.12);
+      padding: 32px;
+    }
+
+    h1 {
+      margin: 0 0 24px;
+      font-size: 30px;
+      text-align: center;
+      color: #111827;
+    }
+
+    h2 {
+      margin: 0 0 14px;
+      font-size: 20px;
+      color: #111827;
+    }
+
+    .hidden { display: none !important; }
+
+    .setup-screen { max-width: 850px; margin: 0 auto; }
+
+    .setup-card, .input-card, .history-card, .special-card {
+      background: #f9fafb;
+      border: 1px solid #e5e7eb;
+      border-radius: 18px;
+      padding: 20px;
+      margin-bottom: 16px;
+    }
+
+    .setup-grid-2 {
+      display: grid;
+      grid-template-columns: 1fr 180px;
+      gap: 12px;
+      margin-bottom: 12px;
+      align-items: center;
+    }
+
+    .setup-grid-3 {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 12px;
+      margin-bottom: 12px;
+      align-items: center;
+    }
+
+    .gift-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      margin-bottom: 10px;
+    }
+
+    .main-grid {
+      display: grid;
+      grid-template-columns: 1.1fr 0.9fr;
+      gap: 20px;
+      align-items: start;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+      margin-bottom: 20px;
+    }
+
+    .card-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 10px;
+    }
+
+    label {
+      display: block;
+      font-weight: 800;
+      color: #374151;
+      margin-bottom: 6px;
+    }
+
+    input, select {
+      width: 100%;
+      height: 50px;
+      border: 1px solid #d1d5db;
+      border-radius: 12px;
+      padding: 0 14px;
+      font-size: 20px;
+      font-weight: 700;
+      outline: none;
+      transition: 0.2s;
+      background: #ffffff;
+    }
+
+    input[type="checkbox"] {
+      width: 22px;
+      height: 22px;
+      padding: 0;
+      accent-color: #2563eb;
+    }
+
+    input:focus, select:focus {
+      border-color: #2563eb;
+      box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.12);
+    }
+
+    .checkbox-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 14px;
+      font-weight: 900;
+      color: #374151;
+    }
+
+    .round-row {
+      display: grid;
+      grid-template-columns: 1fr 150px;
+      gap: 12px;
+      align-items: center;
+    }
+
+    .button-section-title {
+      margin: 8px 0 12px;
+      text-align: center;
+      font-weight: 900;
+      color: #374151;
+      font-size: 17px;
+    }
+
+    .buttons {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 12px;
+      margin-bottom: 20px;
+    }
+
+    .gift-buttons {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 12px;
+      margin-bottom: 20px;
+    }
+
+    button {
+      height: 52px;
+      border: none;
+      border-radius: 14px;
+      font-size: 17px;
+      font-weight: 900;
+      cursor: pointer;
+      transition: transform 0.12s ease, box-shadow 0.12s ease, opacity 0.12s ease;
+      color: white;
+      white-space: nowrap;
+    }
+
+    button:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 10px 20px rgba(15, 23, 42, 0.16);
+    }
+
+    button:active { transform: translateY(0); opacity: 0.85; }
+    button:disabled { opacity: 0.45; cursor: not-allowed; transform: none; box-shadow: none; }
+
+    .positive-btn, .add-round, .start-btn { background: #16a34a; }
+    .negative-btn { background: #dc2626; }
+    .copy-btn {
+      height: 34px;
+      padding: 0 12px;
+      border-radius: 10px;
+      background: #2563eb;
+      font-size: 14px;
+      font-weight: 800;
+      flex: 0 0 auto;
+    }
+    .secondary { min-width: 140px; background: #6b7280; font-size: 16px; }
+    .danger { background: #b91c1c; }
+
+    .result-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 16px;
+      margin-bottom: 22px;
+    }
+
+    .result-card {
+      background: #f8fafc;
+      border: 1px solid #e5e7eb;
+      border-radius: 18px;
+      padding: 18px;
+      text-align: center;
+    }
+
+    .result-label {
+      color: #6b7280;
+      font-size: 14px;
+      margin-bottom: 8px;
+      font-weight: 700;
+    }
+
+    .result-value {
+      font-size: 24px;
+      font-weight: 950;
+      color: #111827;
+      word-break: break-all;
+    }
+
+    .remaining.positive { color: #dc2626; }
+    .remaining.done { color: #16a34a; }
+
+    .progress-wrap {
+      margin-top: 8px;
+      background: #e5e7eb;
+      border-radius: 999px;
+      height: 18px;
+      overflow: hidden;
+    }
+
+    .progress-bar {
+      width: 0%;
+      height: 100%;
+      background: linear-gradient(90deg, #2563eb, #16a34a);
+      border-radius: 999px;
+      transition: width 0.25s ease;
+    }
+
+    .progress-text {
+      margin-top: 10px;
+      text-align: center;
+      font-weight: 900;
+      color: #374151;
+    }
+
+    .special-status {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 10px;
+      margin-bottom: 16px;
+    }
+
+    .status-pill {
+      background: #eef2ff;
+      color: #3730a3;
+      border: 1px solid #c7d2fe;
+      border-radius: 14px;
+      padding: 12px;
+      text-align: center;
+      font-weight: 900;
+    }
+
+    .history-list {
+      max-height: 530px;
+      overflow-y: auto;
+      padding-right: 4px;
+    }
+
+    .history-item {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 10px;
+      align-items: center;
+      padding: 12px;
+      border: 1px solid #e5e7eb;
+      background: #ffffff;
+      border-radius: 14px;
+      margin-bottom: 10px;
+    }
+
+    .history-main {
+      font-weight: 900;
+      color: #111827;
+      line-height: 1.45;
+    }
+
+    .history-sub {
+      font-size: 12px;
+      color: #6b7280;
+      margin-top: 4px;
+    }
+
+    .undo-btn {
+      height: 36px;
+      padding: 0 12px;
+      border-radius: 10px;
+      background: #f59e0b;
+      font-size: 14px;
+    }
+
+    .tool-stack {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 16px;
+      margin-top: 20px;
+    }
+
+    .tool-stack .input-card {
+      margin-bottom: 0;
+    }
+
+    .action-row {
+      display: flex;
+      justify-content: center;
+      gap: 12px;
+      margin-top: 20px;
+      flex-wrap: wrap;
+    }
+
+    .toast {
+      position: fixed;
+      left: 50%;
+      bottom: 28px;
+      transform: translateX(-50%);
+      background: #111827;
+      color: #ffffff;
+      padding: 12px 18px;
+      border-radius: 999px;
+      font-size: 15px;
+      font-weight: 800;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.2s ease, bottom 0.2s ease;
+      box-shadow: 0 12px 25px rgba(0, 0, 0, 0.22);
+      z-index: 10;
+    }
+
+    .toast.show { opacity: 1; bottom: 42px; }
+
+    @media (max-width: 900px) {
+      .container { padding: 22px; }
+      .main-grid, .grid, .result-grid, .round-row, .setup-grid-2, .setup-grid-3, .gift-row, .special-status { grid-template-columns: 1fr; }
+      .buttons, .gift-buttons { grid-template-columns: 1fr 1fr; }
+      h1 { font-size: 24px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div id="setupScreen" class="setup-screen">
+      <h1>竞拍之王挑战设置</h1>
+
+      <div class="setup-card">
+        <h2>第一步：你叫什么？</h2>
+        <input id="setupName" type="text" />
+      </div>
+
+      <div class="setup-card">
+        <h2>第二步：设置礼物和对应目标变化</h2>
+        <div id="giftSetupList"></div>
+      </div>
+
+      <div class="setup-card">
+        <h2>第三步：特殊选项</h2>
+        <div class="checkbox-row">
+          <input id="bonusEnabled" type="checkbox" />
+          <span>开启限时倍率规则</span>
+        </div>
+        <div class="setup-grid-3">
+          <div>
+            <label for="bonusWindowMinutes">统计时间/分钟</label>
+            <input id="bonusWindowMinutes" type="number" min="1" />
+          </div>
+          <div>
+            <label for="bonusThreshold">目标增加达到</label>
+            <input id="bonusThreshold" type="number" min="0" />
+          </div>
+          <div>
+            <label for="bonusDurationHours">生效时长/小时</label>
+            <input id="bonusDurationHours" type="number" min="0" step="0.1" />
+          </div>
+        </div>
+        <div class="setup-grid-2">
+          <div>
+            <label for="bonusMultiplier">收益倍率</label>
+            <input id="bonusMultiplier" type="number" min="1" step="0.01" />
+          </div>
+          <div></div>
+        </div>
+      </div>
+
+      <div class="action-row">
+        <button class="start-btn" onclick="finishSetup()">进入页面</button>
+      </div>
+    </div>
+
+    <div id="mainScreen" class="main-screen hidden">
+      <h1 id="pageTitle">竞拍之王挑战</h1>
+
+      <div class="main-grid">
+        <div>
+          <div class="grid">
+            <div class="input-card">
+              <div class="card-top">
+                <label for="target">目标总数</label>
+                <button class="copy-btn" onclick="copyTarget()">复制目标</button>
+              </div>
+              <input id="target" type="number" value="1000000" step="10000" />
+            </div>
+
+            <div class="input-card">
+              <div class="card-top">
+                <label for="current">目前收益</label>
+                <button class="copy-btn" onclick="copyIncome()">复制收益</button>
+              </div>
+              <input id="current" type="number" value="0" step="10000" />
+            </div>
+          </div>
+
+          <div class="input-card">
+            <div class="card-top">
+              <label for="roundIncome">输入本局收益</label>
+            </div>
+            <div class="round-row">
+              <input id="roundIncome" type="number" step="1000" />
+              <button class="add-round" onclick="addRoundIncome()">加入收益</button>
+            </div>
+          </div>
+
+          <div id="specialStatus" class="special-card hidden">
+            <div class="special-status">
+              <div class="status-pill" id="bonusMonitorShow">统计：0</div>
+              <div class="status-pill" id="bonusActiveShow">倍率：未生效</div>
+            </div>
+          </div>
+
+          <div class="button-section-title">调整目标总数</div>
+          <div id="giftButtons" class="gift-buttons"></div>
+
+          <div class="result-grid">
+            <div class="result-card">
+              <div class="result-label">目标总数</div>
+              <div class="result-value" id="targetShow">0</div>
+            </div>
+
+            <div class="result-card">
+              <div class="result-label">目前收益</div>
+              <div class="result-value" id="currentShow">0</div>
+            </div>
+
+            <div class="result-card">
+              <div class="result-label">还差多少</div>
+              <div class="result-value remaining" id="remainingShow">0</div>
+            </div>
+          </div>
+
+          <div class="progress-wrap">
+            <div class="progress-bar" id="progressBar"></div>
+          </div>
+          <div class="progress-text" id="progressText">完成度：0%</div>
+
+          <div class="action-row">
+            <button class="secondary" onclick="resetCurrent()">清空收益</button>
+            <button class="secondary" onclick="resetAll()">全部重置</button>
+            <button class="secondary" onclick="openSetup()">重新设置</button>
+          </div>
+
+        </div>
+
+        <div class="history-card">
+          <div class="card-top">
+            <h2 style="margin:0;">历史记录</h2>
+            <button class="copy-btn danger" onclick="clearHistory()">清空</button>
+          </div>
+          <div id="historyList" class="history-list"></div>
+        </div>
+      </div>
+
+      <div class="tool-stack">
+        <div class="input-card">
+          <div class="card-top">
+            <label>黏住~</label>
+            <button class="copy-btn" onclick="copyStickResult()">复制</button>
+          </div>
+          <div class="gift-row">
+            <input id="opponentEstimate" type="number" placeholder="预估对方出多少" />
+            <input id="stickMultiplier" type="number" placeholder="倍率系数" step="0.01" />
+          </div>
+          <div class="round-row">
+            <input id="stickResult" type="number" readonly />
+            <button class="add-round" onclick="calculateStickResult()">计算</button>
+          </div>
+        </div>
+
+        <div class="input-card">
+          <div class="card-top">
+            <label>随机数秒仓</label>
+            <button class="copy-btn" onclick="copyRandomResult()">复制</button>
+          </div>
+          <div class="gift-row">
+            <input id="randomMin" type="number" placeholder="下限" />
+            <input id="randomMax" type="number" placeholder="上限" />
+          </div>
+          <div class="round-row">
+            <input id="randomResult" type="number" readonly />
+            <button class="add-round" onclick="generateRandomResult()">随机</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="toast" id="toast">已复制</div>
+
+  <script>
+    const MAX_GIFTS = 6;
+
+    const setupScreen = document.getElementById("setupScreen");
+    const mainScreen = document.getElementById("mainScreen");
+    const setupName = document.getElementById("setupName");
+    const giftSetupList = document.getElementById("giftSetupList");
+    const bonusEnabled = document.getElementById("bonusEnabled");
+    const bonusWindowMinutes = document.getElementById("bonusWindowMinutes");
+    const bonusThreshold = document.getElementById("bonusThreshold");
+    const bonusDurationHours = document.getElementById("bonusDurationHours");
+    const bonusMultiplier = document.getElementById("bonusMultiplier");
+
+    const pageTitle = document.getElementById("pageTitle");
+    const targetInput = document.getElementById("target");
+    const currentInput = document.getElementById("current");
+    const roundIncomeInput = document.getElementById("roundIncome");
+    const targetShow = document.getElementById("targetShow");
+    const currentShow = document.getElementById("currentShow");
+    const remainingShow = document.getElementById("remainingShow");
+    const progressBar = document.getElementById("progressBar");
+    const progressText = document.getElementById("progressText");
+    const toast = document.getElementById("toast");
+    const giftButtons = document.getElementById("giftButtons");
+    const historyList = document.getElementById("historyList");
+    const randomMinInput = document.getElementById("randomMin");
+    const randomMaxInput = document.getElementById("randomMax");
+    const randomResultInput = document.getElementById("randomResult");
+    const opponentEstimateInput = document.getElementById("opponentEstimate");
+    const stickMultiplierInput = document.getElementById("stickMultiplier");
+    const stickResultInput = document.getElementById("stickResult");
+    const specialStatus = document.getElementById("specialStatus");
+    const bonusMonitorShow = document.getElementById("bonusMonitorShow");
+    const bonusActiveShow = document.getElementById("bonusActiveShow");
+
+    const DEFAULT_SETTINGS = {
+      playerName: "",
+      gifts: [
+        { name: "办卡", value: 50000 },
+        { name: "飞机", value: 1000000 },
+        { name: "", value: "" },
+        { name: "", value: "" },
+        { name: "", value: "" },
+        { name: "", value: "" }
+      ],
+      bonus: {
+        enabled: false,
+        windowMinutes: 30,
+        threshold: 10000000,
+        durationHours: 1,
+        multiplier: 1.1
+      }
+    };
+
+    let settings = JSON.parse(JSON.stringify(DEFAULT_SETTINGS));
+    let history = [];
+    let bonusActiveUntil = 0;
+
+    function getNumber(value) {
+      const number = Number(value);
+      return Number.isFinite(number) ? number : 0;
+    }
+
+    function formatNumber(number) {
+      return Math.round(number).toLocaleString("zh-CN");
+    }
+
+    function plainNumber(number) {
+      return String(Math.round(number));
+    }
+
+    function nowText(timestamp) {
+      return new Date(timestamp).toLocaleTimeString("zh-CN", { hour12: false });
+    }
+
+    function clone(obj) {
+      return JSON.parse(JSON.stringify(obj));
+    }
+
+    function saveSettings() {
+      localStorage.setItem("liveAuctionSettingsV2", JSON.stringify(settings));
+    }
+
+    function loadSettings() {
+      const saved = localStorage.getItem("liveAuctionSettingsV2");
+      if (!saved) return;
+      try {
+        const parsed = JSON.parse(saved);
+        settings = {
+          ...clone(DEFAULT_SETTINGS),
+          ...parsed,
+          bonus: { ...clone(DEFAULT_SETTINGS).bonus, ...(parsed.bonus || {}) }
+        };
+        settings.gifts = [...(parsed.gifts || [])].slice(0, MAX_GIFTS);
+        while (settings.gifts.length < MAX_GIFTS) settings.gifts.push({ name: "", value: "" });
+      } catch (error) {
+        settings = clone(DEFAULT_SETTINGS);
+      }
+    }
+
+    function saveData() {
+      localStorage.setItem("liveIncomeTarget", targetInput.value);
+      localStorage.setItem("liveIncomeCurrent", currentInput.value);
+      localStorage.setItem("liveAuctionHistoryV2", JSON.stringify(history));
+      localStorage.setItem("liveAuctionBonusActiveUntil", String(bonusActiveUntil));
+    }
+
+    function loadData() {
+      const savedTarget = localStorage.getItem("liveIncomeTarget");
+      const savedCurrent = localStorage.getItem("liveIncomeCurrent");
+      const savedHistory = localStorage.getItem("liveAuctionHistoryV2");
+      const savedBonusUntil = localStorage.getItem("liveAuctionBonusActiveUntil");
+
+      if (savedTarget !== null) targetInput.value = savedTarget;
+      if (savedCurrent !== null) currentInput.value = savedCurrent;
+      if (savedBonusUntil !== null) bonusActiveUntil = getNumber(savedBonusUntil);
+      if (savedHistory) {
+        try { history = JSON.parse(savedHistory) || []; } catch (error) { history = []; }
+      }
+    }
+
+    function buildGiftSetup() {
+      giftSetupList.innerHTML = "";
+      for (let i = 0; i < MAX_GIFTS; i++) {
+        const gift = settings.gifts[i] || { name: "", value: "" };
+        const row = document.createElement("div");
+        row.className = "gift-row";
+        row.innerHTML = `
+          <input id="giftName${i}" type="text" value="${escapeHtml(gift.name || "")}" />
+          <input id="giftValue${i}" type="number" value="${gift.value === "" ? "" : getNumber(gift.value)}" />
+        `;
+        giftSetupList.appendChild(row);
+      }
+    }
+
+    function escapeHtml(value) {
+      return String(value).replaceAll("&", "&amp;").replaceAll("<", "&lt;").replaceAll(">", "&gt;").replaceAll('"', "&quot;");
+    }
+
+    function applySettingsToSetup() {
+      setupName.value = settings.playerName || "";
+      buildGiftSetup();
+      bonusEnabled.checked = Boolean(settings.bonus.enabled);
+      bonusWindowMinutes.value = settings.bonus.windowMinutes;
+      bonusThreshold.value = settings.bonus.threshold;
+      bonusDurationHours.value = settings.bonus.durationHours;
+      bonusMultiplier.value = settings.bonus.multiplier;
+    }
+
+    function readSettingsFromSetup() {
+      const gifts = [];
+      for (let i = 0; i < MAX_GIFTS; i++) {
+        const name = document.getElementById("giftName" + i).value.trim();
+        const value = getNumber(document.getElementById("giftValue" + i).value);
+        if (name && value !== 0) gifts.push({ name, value });
+      }
+
+      settings.playerName = setupName.value.trim() || "挑战者";
+      settings.gifts = gifts;
+      settings.bonus = {
+        enabled: bonusEnabled.checked,
+        windowMinutes: Math.max(1, getNumber(bonusWindowMinutes.value) || 30),
+        threshold: Math.max(0, getNumber(bonusThreshold.value) || 10000000),
+        durationHours: Math.max(0, getNumber(bonusDurationHours.value) || 1),
+        multiplier: Math.max(1, getNumber(bonusMultiplier.value) || 1.1)
+      };
+    }
+
+    function finishSetup() {
+      readSettingsFromSetup();
+      saveSettings();
+      showMain();
+    }
+
+    function showSetup() {
+      applySettingsToSetup();
+      setupScreen.classList.remove("hidden");
+      mainScreen.classList.add("hidden");
+    }
+
+    function openSetup() {
+      showSetup();
+    }
+
+    function showMain() {
+      const title = settings.playerName + "竞拍之王挑战";
+      document.title = title;
+      pageTitle.textContent = title;
+      setupScreen.classList.add("hidden");
+      mainScreen.classList.remove("hidden");
+      buildGiftButtons();
+      updateResult();
+      renderHistory();
+    }
+
+    function buildGiftButtons() {
+      giftButtons.innerHTML = "";
+      const validGifts = settings.gifts.filter(g => g.name && getNumber(g.value) !== 0).slice(0, MAX_GIFTS);
+      validGifts.forEach((gift, index) => {
+        const plus = document.createElement("button");
+        plus.className = "positive-btn";
+        plus.textContent = "+" + gift.name;
+        plus.onclick = () => changeTargetByGift(index, 1);
+        giftButtons.appendChild(plus);
+
+        const minus = document.createElement("button");
+        minus.className = "negative-btn";
+        minus.textContent = "-" + gift.name;
+        minus.onclick = () => changeTargetByGift(index, -1);
+        giftButtons.appendChild(minus);
+      });
+    }
+
+    function updateResult() {
+      const target = getNumber(targetInput.value);
+      const current = getNumber(currentInput.value);
+      const remaining = target - current;
+
+      targetShow.textContent = formatNumber(target);
+      currentShow.textContent = formatNumber(current);
+
+      if (remaining > 0) {
+        remainingShow.textContent = formatNumber(remaining);
+        remainingShow.className = "result-value remaining positive";
+      } else {
+        remainingShow.textContent = "已完成 +" + formatNumber(Math.abs(remaining));
+        remainingShow.className = "result-value remaining done";
+      }
+
+      let percent = 0;
+      if (target > 0) percent = (current / target) * 100;
+      progressBar.style.width = Math.max(0, Math.min(percent, 100)) + "%";
+      progressText.textContent = "完成度：" + percent.toFixed(2) + "%";
+
+      updateBonusStatus();
+      saveData();
+    }
+
+    function addHistory(item) {
+      history.unshift({ id: Date.now() + Math.random(), time: Date.now(), undone: false, ...item });
+      history = history.slice(0, 120);
+      renderHistory();
+      saveData();
+    }
+
+    function changeTargetByGift(index, direction) {
+      const gift = settings.gifts.filter(g => g.name && getNumber(g.value) !== 0)[index];
+      if (!gift) return;
+      const amount = getNumber(gift.value) * direction;
+      const before = getNumber(targetInput.value);
+      const after = Math.max(0, before + amount);
+      const actualAmount = after - before;
+      targetInput.value = after;
+
+      addHistory({
+        type: "target",
+        label: (direction > 0 ? "+" : "-") + gift.name,
+        amount: actualAmount,
+        originalAmount: amount,
+        before,
+        after
+      });
+
+      checkBonusTrigger();
+      updateResult();
+    }
+
+    function addRoundIncome() {
+      const rawIncome = getNumber(roundIncomeInput.value);
+      if (rawIncome === 0 && roundIncomeInput.value.trim() === "") return;
+
+      const multiplier = isBonusActive() ? settings.bonus.multiplier : 1;
+      const appliedIncome = rawIncome * multiplier;
+      const before = getNumber(currentInput.value);
+      const after = before + appliedIncome;
+      currentInput.value = Math.round(after);
+      roundIncomeInput.value = "";
+      roundIncomeInput.focus();
+
+      addHistory({
+        type: "income",
+        label: "本局收益",
+        amount: Math.round(appliedIncome),
+        rawAmount: rawIncome,
+        multiplier,
+        before,
+        after: Math.round(after)
+      });
+
+      updateResult();
+    }
+
+    function isBonusActive() {
+      return settings.bonus.enabled && Date.now() < bonusActiveUntil;
+    }
+
+    function getRecentPositiveTargetIncrease() {
+      if (!settings.bonus.enabled) return 0;
+      const windowMs = settings.bonus.windowMinutes * 60 * 1000;
+      const cutoff = Date.now() - windowMs;
+      return history
+        .filter(item => !item.undone && item.type === "target" && item.time >= cutoff && item.amount > 0)
+        .reduce((sum, item) => sum + item.amount, 0);
+    }
+
+    function checkBonusTrigger() {
+      if (!settings.bonus.enabled) return;
+      const recentIncrease = getRecentPositiveTargetIncrease();
+      if (recentIncrease >= settings.bonus.threshold) {
+        const durationMs = settings.bonus.durationHours * 60 * 60 * 1000;
+        bonusActiveUntil = Math.max(bonusActiveUntil, Date.now() + durationMs);
+        showToast("倍率已生效");
+      }
+    }
+
+    function updateBonusStatus() {
+      if (!settings.bonus.enabled) {
+        specialStatus.classList.add("hidden");
+        return;
+      }
+      specialStatus.classList.remove("hidden");
+      const recentIncrease = getRecentPositiveTargetIncrease();
+      bonusMonitorShow.textContent = "统计：" + formatNumber(recentIncrease) + " / " + formatNumber(settings.bonus.threshold);
+
+      if (isBonusActive()) {
+        const remainMs = bonusActiveUntil - Date.now();
+        const remainMin = Math.max(0, Math.ceil(remainMs / 60000));
+        bonusActiveShow.textContent = "倍率：x" + settings.bonus.multiplier + "，剩余" + remainMin + "分钟";
+      } else {
+        bonusActiveShow.textContent = "倍率：未生效";
+      }
+    }
+
+    function renderHistory() {
+      historyList.innerHTML = "";
+      if (history.length === 0) {
+        const empty = document.createElement("div");
+        empty.className = "history-item";
+        empty.innerHTML = `<div class="history-main">暂无记录</div>`;
+        historyList.appendChild(empty);
+        return;
+      }
+
+      history.forEach(item => {
+        const row = document.createElement("div");
+        row.className = "history-item";
+        const sign = item.amount >= 0 ? "+" : "";
+        let mainText = "";
+        let subText = "";
+
+        if (item.type === "target") {
+          mainText = `目标 ${item.label}：${sign}${formatNumber(item.amount)}`;
+          subText = `${nowText(item.time)} ｜ ${formatNumber(item.before)} → ${formatNumber(item.after)}`;
+        } else {
+          mainText = `收益 ${sign}${formatNumber(item.amount)}`;
+          if (item.multiplier && item.multiplier !== 1) {
+            subText = `${nowText(item.time)} ｜ 原始 ${formatNumber(item.rawAmount)} × ${item.multiplier} ｜ ${formatNumber(item.before)} → ${formatNumber(item.after)}`;
+          } else {
+            subText = `${nowText(item.time)} ｜ ${formatNumber(item.before)} → ${formatNumber(item.after)}`;
+          }
+        }
+
+        row.innerHTML = `
+          <div>
+            <div class="history-main">${item.undone ? "已撤回｜" : ""}${mainText}</div>
+            <div class="history-sub">${subText}</div>
+          </div>
+          <button class="undo-btn" ${item.undone ? "disabled" : ""} onclick="undoHistory('${item.id}')">撤回</button>
+        `;
+        historyList.appendChild(row);
+      });
+    }
+
+    function undoHistory(id) {
+      const item = history.find(x => String(x.id) === String(id));
+      if (!item || item.undone) return;
+
+      if (item.type === "target") {
+        targetInput.value = item.before;
+      } else if (item.type === "income") {
+        currentInput.value = item.before;
+      }
+
+      item.undone = true;
+      renderHistory();
+      updateResult();
+      showToast("已撤回");
+    }
+
+    function resetCurrent() {
+      const before = getNumber(currentInput.value);
+      currentInput.value = 0;
+      addHistory({ type: "income", label: "清空收益", amount: -before, rawAmount: -before, multiplier: 1, before, after: 0 });
+      updateResult();
+    }
+
+    function resetAll() {
+      const beforeTarget = getNumber(targetInput.value);
+      const beforeCurrent = getNumber(currentInput.value);
+      targetInput.value = 1000000;
+      currentInput.value = 0;
+      roundIncomeInput.value = "";
+      bonusActiveUntil = 0;
+      addHistory({ type: "target", label: "全部重置", amount: 1000000 - beforeTarget, before: beforeTarget, after: 1000000 });
+      addHistory({ type: "income", label: "全部重置", amount: -beforeCurrent, rawAmount: -beforeCurrent, multiplier: 1, before: beforeCurrent, after: 0 });
+      updateResult();
+    }
+
+    function clearHistory() {
+      history = [];
+      renderHistory();
+      updateResult();
+    }
+
+    function showToast(message) {
+      toast.textContent = message;
+      toast.classList.add("show");
+      setTimeout(() => toast.classList.remove("show"), 1200);
+    }
+
+    async function copyText(text, message) {
+      try {
+        await navigator.clipboard.writeText(text);
+        showToast(message);
+      } catch (error) {
+        const tempInput = document.createElement("input");
+        tempInput.value = text;
+        document.body.appendChild(tempInput);
+        tempInput.select();
+        document.execCommand("copy");
+        document.body.removeChild(tempInput);
+        showToast(message);
+      }
+    }
+
+    function copyTarget() {
+      copyText(plainNumber(getNumber(targetInput.value)), "已复制目标数字");
+    }
+
+    function copyIncome() {
+      copyText(plainNumber(getNumber(currentInput.value)), "已复制收益数字");
+    }
+
+    function generateRandomResult() {
+      const min = Math.ceil(getNumber(randomMinInput.value));
+      const max = Math.floor(getNumber(randomMaxInput.value));
+      const low = Math.min(min, max);
+      const high = Math.max(min, max);
+      const result = Math.floor(Math.random() * (high - low + 1)) + low;
+      randomResultInput.value = result;
+      copyText(plainNumber(result), "已生成随机数");
+    }
+
+    function copyRandomResult() {
+      copyText(plainNumber(getNumber(randomResultInput.value)), "已复制随机数");
+    }
+
+    function calculateStickResult() {
+      const opponentEstimate = getNumber(opponentEstimateInput.value);
+      const multiplier = getNumber(stickMultiplierInput.value);
+      if (multiplier === 0) {
+        stickResultInput.value = "";
+        showToast("倍率系数不能为0");
+        return;
+      }
+      const result = Math.floor(opponentEstimate / multiplier) + 1;
+      stickResultInput.value = result;
+      copyText(plainNumber(result), "已计算黏住值");
+    }
+
+    function copyStickResult() {
+      copyText(plainNumber(getNumber(stickResultInput.value)), "已复制黏住值");
+    }
+
+    targetInput.addEventListener("input", updateResult);
+    currentInput.addEventListener("input", updateResult);
+    roundIncomeInput.addEventListener("keydown", function(event) {
+      if (event.key === "Enter") addRoundIncome();
+    });
+
+    setInterval(updateBonusStatus, 1000);
+
+    loadSettings();
+    loadData();
+    showSetup();
+  </script>
+</body>
+</html>
